@@ -55,25 +55,37 @@ impl ProxyConfig {
                         return true;
                     }
                     // Simple CIDR check for common cases
+                    // Note: This is a simplified implementation matching the Node.js version
+                    // For production use, consider using a proper CIDR library like 'ipnetwork'
                     if allowed_pattern.contains('/') {
                         let parts: Vec<&str> = allowed_pattern.split('/').collect();
                         if parts.len() == 2 {
                             let network = parts[0];
-                            // Basic prefix matching for CIDR
+                            let mask_bits = parts[1].parse::<u8>().unwrap_or(0);
+                            
+                            // Basic validation of mask bits
+                            if mask_bits == 0 || mask_bits > 32 {
+                                continue;
+                            }
+                            
+                            // Basic prefix matching for CIDR (simplified)
                             let network_parts: Vec<&str> = network.split('.').collect();
                             let ip_parts: Vec<&str> = ip.split('.').collect();
                             
-                            if network_parts.len() >= 3 && ip_parts.len() == 4 {
-                                let prefix: Vec<String> = network_parts[..network_parts.len()-1]
-                                    .iter()
-                                    .map(|s| s.to_string())
-                                    .collect();
-                                let ip_prefix: Vec<String> = ip_parts[..prefix.len()]
-                                    .iter()
-                                    .map(|s| s.to_string())
-                                    .collect();
+                            if network_parts.len() == 4 && ip_parts.len() == 4 {
+                                // Calculate how many octets to compare based on mask
+                                let octets_to_compare = ((mask_bits + 7) / 8) as usize;
+                                let octets_to_compare = octets_to_compare.min(4);
                                 
-                                if prefix == ip_prefix {
+                                let mut matches = true;
+                                for i in 0..octets_to_compare {
+                                    if network_parts[i] != ip_parts[i] {
+                                        matches = false;
+                                        break;
+                                    }
+                                }
+                                
+                                if matches {
                                     return true;
                                 }
                             }
@@ -153,7 +165,7 @@ async fn handle_request(
         }
 
         // Validate port range
-        if udp_port < 1 {
+        if udp_port == 0 {
             eprintln!("Invalid UDP port: {}", udp_port);
             let error = ErrorResponse {
                 success: false,
