@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="CoT Position Publisher - Publish Cursor on Target position messages">
+    <meta name="theme-color" content="#2196F3">
+    <title>CoT Publisher</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>📍</text></svg>">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📍 CoT Publisher</h1>
+            <p class="subtitle">Cursor on Target Position Publisher</p>
+        </header>
+
+        <main>
+            <!-- Connection Settings -->
+            <section class="card">
+                <h2>Impostazioni Connessione</h2>
+                <div class="form-group">
+                    <label for="proxyAddress">Indirizzo Proxy:</label>
+                    <input type="text" id="proxyAddress" placeholder="localhost:8080" value="localhost:8080">
+                    <small>Indirizzo del server proxy HTTP (es: localhost:8080)</small>
+                </div>
+                <div class="form-group">
+                    <label for="udpHost">Indirizzo UDP Destinazione:</label>
+                    <input type="text" id="udpHost" placeholder="192.168.1.100" value="192.168.1.100">
+                    <small>Indirizzo IP del server CoT di destinazione</small>
+                </div>
+                <div class="form-group">
+                    <label for="udpPort">Porta UDP:</label>
+                    <input type="number" id="udpPort" placeholder="8087" value="8087" min="1" max="65535">
+                    <small>Porta UDP del server CoT</small>
+                </div>
+            </section>
+
+            <!-- CoT Settings -->
+            <section class="card">
+                <h2>Impostazioni CoT</h2>
+                <div class="form-group">
+                    <label for="callsign">Callsign:</label>
+                    <input type="text" id="callsign" placeholder="ALPHA-1" value="ALPHA-1">
+                </div>
+                <div class="form-group">
+                    <label for="team">Team:</label>
+                    <select id="team">
+                        <option value="Cyan">Cyan</option>
+                        <option value="Blue">Blue</option>
+                        <option value="Green">Green</option>
+                        <option value="Yellow">Yellow</option>
+                        <option value="Orange">Orange</option>
+                        <option value="Red">Red</option>
+                        <option value="Magenta">Magenta</option>
+                        <option value="White">White</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="role">Role:</label>
+                    <select id="role">
+                        <option value="Team Member">Team Member</option>
+                        <option value="Team Lead">Team Lead</option>
+                        <option value="HQ">HQ</option>
+                        <option value="Sniper">Sniper</option>
+                        <option value="Medic">Medic</option>
+                        <option value="Forward Observer">Forward Observer</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="uid">UID:</label>
+                    <input type="text" id="uid" placeholder="Auto-generato">
+                    <small>Lasciare vuoto per generare automaticamente</small>
+                </div>
+            </section>
+
+            <!-- Timing Settings -->
+            <section class="card">
+                <h2>Intervallo Invio</h2>
+                <div class="form-group">
+                    <label for="interval">Intervallo (secondi):</label>
+                    <input type="number" id="interval" min="1" max="300" value="5">
+                    <small>Tempo tra ogni invio di posizione</small>
+                </div>
+            </section>
+
+            <!-- Status Display -->
+            <section class="card status-card">
+                <h2>Stato</h2>
+                <div class="status-info">
+                    <div class="status-row">
+                        <span class="status-label">Stato:</span>
+                        <span id="status" class="status-value">Inattivo</span>
+                    </div>
+                    <div class="status-row">
+                        <span class="status-label">Posizione:</span>
+                        <span id="position" class="status-value">In attesa...</span>
+                    </div>
+                    <div class="status-row">
+                        <span class="status-label">Messaggi inviati:</span>
+                        <span id="messageCount" class="status-value">0</span>
+                    </div>
+                    <div class="status-row">
+                        <span class="status-label">Ultimo invio:</span>
+                        <span id="lastSent" class="status-value">Mai</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Control Buttons -->
+            <section class="controls">
+                <button id="startBtn" class="btn btn-start">▶️ Avvia</button>
+                <button id="pauseBtn" class="btn btn-pause" disabled>⏸️ Pausa</button>
+            </section>
+
+            <!-- Log Display -->
+            <section class="card log-card">
+                <h2>Log</h2>
+                <div id="log" class="log-content"></div>
+            </section>
+        </main>
+
+        <footer>
+            <p>PWA - Offline Ready</p>
+        </footer>
+    </div>
+
+    <script src="cot.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
