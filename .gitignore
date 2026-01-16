@@ -1,0 +1,26 @@
+# Editor and IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Temporary files
+*.tmp
+*.bak
+*.log
+
+# Node modules (if added later)
+node_modules/
+
+# Build output
+dist/
+build/
+
+# Coverage reports
+coverage/
+
+# Environment files
+.env
+.env.local

@@ -1,0 +1,14 @@
+{
+  "name": "cot-publisher-proxy",
+  "version": "1.0.0",
+  "description": "UDP proxy server for CoT Publisher PWA",
+  "main": "proxy-server.js",
+  "scripts": {
+    "start": "node proxy-server.js",
+    "dev": "node proxy-server.js"
+  },
+  "keywords": ["cot", "udp", "proxy"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {}
+}
