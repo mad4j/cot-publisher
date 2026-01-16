@@ -1,13 +1,15 @@
 {
   "name": "cot-publisher-proxy",
   "version": "1.0.0",
-  "description": "UDP proxy server for CoT Publisher PWA",
+  "description": "UDP proxy server for CoT Publisher PWA (Rust implementation)",
   "main": "proxy-server.js",
   "scripts": {
-    "start": "node proxy-server.js",
-    "dev": "node proxy-server.js"
+    "start": "./target/release/cot-proxy",
+    "start:node": "node proxy-server.js",
+    "dev": "./target/release/cot-proxy",
+    "build": "cargo build --release"
   },
-  "keywords": ["cot", "udp", "proxy"],
+  "keywords": ["cot", "udp", "proxy", "rust"],
   "author": "",
   "license": "MIT",
   "dependencies": {}
