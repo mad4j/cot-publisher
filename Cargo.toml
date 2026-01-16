@@ -1,0 +1,23 @@
+[package]
+name = "cot-proxy"
+version = "1.0.0"
+edition = "2021"
+authors = []
+description = "UDP proxy server for CoT Publisher PWA"
+
+[[bin]]
+name = "cot-proxy"
+path = "src/main.rs"
+
+[dependencies]
+tokio = { version = "1.43", features = ["full"] }
+hyper = { version = "1.5", features = ["full"] }
+hyper-util = { version = "0.1", features = ["full"] }
+http-body-util = "0.1"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
