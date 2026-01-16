@@ -153,7 +153,9 @@ export ALLOWED_UDP_HOSTS="192.168.1.0/24,127.0.0.1"
 node proxy-server.js
 ```
 
-**Nota**: Senza configurazione, il proxy permette tutte le destinazioni (modalità sviluppo).
+**Nota**: 
+- Senza configurazione, il proxy permette tutte le destinazioni (modalità sviluppo).
+- Il supporto CIDR è semplificato; per ambienti di produzione critici, considera l'uso di librerie IP dedicate come `ip` o `netmask` per una validazione più accurata.
 
 ### Raccomandazioni di Sicurezza
 

@@ -14,6 +14,7 @@ class CoTPublisher {
         
         // Constants
         this.POSITION_WAIT_MS = 1000; // Time to wait for initial position
+        this.MAX_LOG_ENTRIES = 50; // Maximum number of log entries to keep
         
         this.initializeElements();
         this.initializeEventListeners();
@@ -78,8 +79,8 @@ class CoTPublisher {
         
         this.elements.log.appendChild(logEntry);
         
-        // Keep only last 50 log entries
-        while (this.elements.log.children.length > 50) {
+        // Keep only last MAX_LOG_ENTRIES log entries
+        while (this.elements.log.children.length > this.MAX_LOG_ENTRIES) {
             this.elements.log.removeChild(this.elements.log.firstChild);
         }
         

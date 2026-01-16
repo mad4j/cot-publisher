@@ -3,6 +3,9 @@
  * Generates CoT XML messages according to the CoT standard
  */
 
+// Constants
+const STALE_TIME_MS = 300000; // 5 minutes in milliseconds
+
 class CoTMessage {
     constructor(config) {
         this.config = config;
@@ -32,7 +35,7 @@ class CoTMessage {
      */
     generateMessage(position) {
         const now = new Date();
-        const stale = new Date(now.getTime() + 300000); // 5 minutes from now
+        const stale = new Date(now.getTime() + STALE_TIME_MS);
 
         // CoT type for friendly ground unit
         const cotType = 'a-f-G-U-C';
