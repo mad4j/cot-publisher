@@ -12,6 +12,9 @@ class CoTPublisher {
         this.watchId = null;
         this.cotGenerator = null;
         
+        // Constants
+        this.POSITION_WAIT_MS = 1000; // Time to wait for initial position
+        
         this.initializeElements();
         this.initializeEventListeners();
         this.initializeServiceWorker();
@@ -177,9 +180,12 @@ class CoTPublisher {
         const udpHost = this.elements.udpHost.value;
         const udpPort = this.elements.udpPort.value;
 
+        // Use same protocol as current page (http or https)
+        const protocol = window.location.protocol === 'https:' ? 'https' : 'http';
+
         try {
-            // Send via HTTP to proxy, which forwards via UDP
-            const response = await fetch(`http://${proxyAddress}/cot`, {
+            // Send via HTTP/HTTPS to proxy, which forwards via UDP
+            const response = await fetch(`${protocol}://${proxyAddress}/cot`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/xml',
@@ -249,8 +255,8 @@ class CoTPublisher {
 
         this.log('Pubblicazione avviata', 'success');
 
-        // Wait a bit for position to be available
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        // Wait for position to be available
+        await new Promise(resolve => setTimeout(resolve, this.POSITION_WAIT_MS));
 
         // Send first message immediately
         await this.sendCoTMessage();

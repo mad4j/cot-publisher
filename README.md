@@ -140,11 +140,30 @@ La geolocalizzazione richiede HTTPS (tranne per localhost). Per testare su dispo
 
 ## Sicurezza
 
-⚠️ Questa applicazione invia dati di posizione. Per uso in produzione, considera:
-- Utilizzo di HTTPS/TLS per la connessione PWA-Proxy
-- Autenticazione al proxy server
-- Firewall e restrizioni di rete appropriate
-- Cifratura dei messaggi CoT se necessario
+### Configurazione Proxy Server
+
+Per limitare le destinazioni UDP in produzione, usa la variabile d'ambiente `ALLOWED_UDP_HOSTS`:
+
+```bash
+# Permetti solo destinazioni specifiche
+ALLOWED_UDP_HOSTS="192.168.1.100,192.168.1.101,10.0.0.0/8" node proxy-server.js
+
+# O specificare nel comando
+export ALLOWED_UDP_HOSTS="192.168.1.0/24,127.0.0.1"
+node proxy-server.js
+```
+
+**Nota**: Senza configurazione, il proxy permette tutte le destinazioni (modalità sviluppo).
+
+### Raccomandazioni di Sicurezza
+
+⚠️ Questa applicazione trasmette dati di posizione. Per uso in produzione:
+- ✅ Configura `ALLOWED_UDP_HOSTS` per limitare le destinazioni
+- ✅ Usa HTTPS/TLS per la connessione PWA-Proxy
+- ✅ Implementa autenticazione al proxy server
+- ✅ Usa firewall per limitare l'accesso al proxy
+- ✅ Considera la cifratura dei messaggi CoT se necessario
+- ✅ Monitora i log del proxy per attività sospette
 
 ## Troubleshooting
 

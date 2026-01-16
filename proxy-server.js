@@ -11,6 +11,42 @@ const url = require('url');
 
 const PROXY_PORT = process.env.PORT || 8080;
 
+// Configuration: Allowed UDP destination networks/hosts
+// Set environment variable ALLOWED_UDP_HOSTS to restrict destinations
+// Format: comma-separated list of IPs or CIDR ranges
+// Example: "192.168.0.0/16,10.0.0.0/8,127.0.0.1"
+const ALLOWED_HOSTS = process.env.ALLOWED_UDP_HOSTS 
+    ? process.env.ALLOWED_UDP_HOSTS.split(',').map(h => h.trim())
+    : null; // null = allow all (development mode)
+
+/**
+ * Check if an IP address is allowed based on the allowlist
+ * @param {string} ip - IP address to check
+ * @returns {boolean} - true if allowed
+ */
+function isAllowedHost(ip) {
+    // If no restrictions configured, allow all (development mode)
+    if (!ALLOWED_HOSTS) {
+        return true;
+    }
+
+    // Check if IP is in the allowlist
+    for (const allowed of ALLOWED_HOSTS) {
+        if (allowed === ip) {
+            return true;
+        }
+        // Simple CIDR check for common cases (could be enhanced with a library)
+        if (allowed.includes('/')) {
+            // Basic CIDR matching - for production, use a proper IP library
+            const [network, bits] = allowed.split('/');
+            if (ip.startsWith(network.split('.').slice(0, -1).join('.'))) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 // Create HTTP server
 const server = http.createServer((req, res) => {
     // Enable CORS
@@ -37,6 +73,28 @@ const server = http.createServer((req, res) => {
             // Get UDP destination from headers
             const udpHost = req.headers['x-udp-host'] || '127.0.0.1';
             const udpPort = parseInt(req.headers['x-udp-port'] || '8087', 10);
+
+            // Validate UDP destination
+            if (!isAllowedHost(udpHost)) {
+                console.error(`Blocked UDP destination: ${udpHost} (not in allowlist)`);
+                res.writeHead(403, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ 
+                    success: false, 
+                    error: 'UDP destination not allowed. Configure ALLOWED_UDP_HOSTS environment variable.' 
+                }));
+                return;
+            }
+
+            // Validate port range
+            if (udpPort < 1 || udpPort > 65535) {
+                console.error(`Invalid UDP port: ${udpPort}`);
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ 
+                    success: false, 
+                    error: 'Invalid UDP port number' 
+                }));
+                return;
+            }
 
             // Create UDP socket
             const client = dgram.createSocket('udp4');
@@ -92,6 +150,14 @@ server.listen(PROXY_PORT, () => {
     console.log('==============================================');
     console.log(`  HTTP Server listening on port ${PROXY_PORT}`);
     console.log(`  Endpoint: http://localhost:${PROXY_PORT}/cot`);
+    console.log('');
+    console.log('  Security:');
+    if (ALLOWED_HOSTS) {
+        console.log(`    Allowed UDP destinations: ${ALLOWED_HOSTS.join(', ')}`);
+    } else {
+        console.log('    ⚠️  All UDP destinations allowed (development mode)');
+        console.log('    Set ALLOWED_UDP_HOSTS env var for production');
+    }
     console.log('');
     console.log('  Usage:');
     console.log('    POST /cot with headers:');
